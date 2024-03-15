@@ -16,5 +16,9 @@
         sub(/time=[0-9\.]+/, "time=" mtime);
     }
 
+    if (owner != "") {
+        sub(/uid=[0-9\.]+/, "uid=" owner)
+    }
+
     print;
 }

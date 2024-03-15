@@ -3,7 +3,7 @@
 load("@aspect_bazel_lib//lib:tar.bzl", "mtree_spec", "tar")
 load("@aspect_bazel_lib//pkg/private:utils.bzl", "mtree_mutate")
 
-def pkg_tar(name, srcs = [], out = None, strip_prefix = None, mtime = None):
+def pkg_tar(name, srcs = [], out = None, strip_prefix = None, owner = None, mtime = None):
     out = out or name + ".tar"
     mtree_spec(
         name = "_{}.mtree".format(name),
@@ -14,6 +14,7 @@ def pkg_tar(name, srcs = [], out = None, strip_prefix = None, mtime = None):
         mtree = "_{}.mtree".format(name),
         strip_prefix = strip_prefix,
         mtime = mtime,
+        owner = owner,
     )
     tar(
         name = name,

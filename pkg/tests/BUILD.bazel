@@ -17,6 +17,7 @@ mtree_mutate(
     name = "modified2",
     mtime = 946684740,  # 1999-12-31, 23:59
     mtree = "source-casync.mtree",
+    owner = "123",
 )
 
 diff_test(
