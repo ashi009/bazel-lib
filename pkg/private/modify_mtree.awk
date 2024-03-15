@@ -20,5 +20,8 @@
         sub(/uid=[0-9\.]+/, "uid=" owner)
     }
 
+    if (ownername != "") {
+        sub(/uname=[^ ]+/, "uname=" ownername)
+    }
     print;
 }
