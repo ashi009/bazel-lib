@@ -1,0 +1,26 @@
+load("@bazel_skylib//rules:diff_test.bzl", "diff_test")
+load("//pkg/private:utils.bzl", "mtree_mutate")
+
+mtree_mutate(
+    name = "modified1",
+    mtree = "source-casync.mtree",
+    strip_prefix = "xattr",
+)
+
+diff_test(
+    name = "test1",
+    file1 = "modified1.mtree",
+    file2 = "expected1.mtree",
+)
+
+mtree_mutate(
+    name = "modified2",
+    mtime = 946684740,  # 1999-12-31, 23:59
+    mtree = "source-casync.mtree",
+)
+
+diff_test(
+    name = "test2",
+    file1 = "modified2.mtree",
+    file2 = "expected2.mtree",
+)

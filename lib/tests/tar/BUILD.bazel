@@ -2,6 +2,7 @@ load("@aspect_bazel_lib//lib:copy_directory.bzl", "copy_directory")
 load("@aspect_bazel_lib//lib:diff_test.bzl", "diff_test")
 load("@aspect_bazel_lib//lib:tar.bzl", "mtree_spec", "tar")
 load("@aspect_bazel_lib//lib:testing.bzl", "assert_archive_contains")
+load("@aspect_bazel_lib//pkg:tar.bzl", "pkg_tar")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load("@bazel_skylib//rules:write_file.bzl", "write_file")
 load(":asserts.bzl", "assert_tar_listing")
@@ -118,37 +119,10 @@ _SRCS5 = [
     "src_file",
 ]
 
-mtree_spec(
-    name = "mtree5",
-    srcs = _SRCS5,
-)
-
-# This is a low-tech way to mutate the mtree specification, just using regex.
-# See docs on tar about future directions for mtree mutation
-genrule(
-    name = "strip_prefix",
-    srcs = ["mtree5"],
-    outs = ["mtree5.stripped"],
-    # Modify lines starting with the package name, e.g.
-    # lib/tests/tar/a uid=0 gid=0 time=1672560000 mode=0755 type=file content=bazel-out/darwin_arm64-opt/bin/lib/tests/tar/a
-    # ->
-    # a uid=0 gid=0 time=1672560000 mode=0755 type=file content=bazel-out/darwin_arm64-opt/bin/lib/tests/tar/a
-    cmd = "sed '{}' <$< | sed '/^\\ /d' > $@".format(
-        "; ".join(reversed([
-            "s#^{s}/##; s#^{s}##".format(s = "/".join(package_name().split("/")[:i]))
-            for (i, _) in enumerate(
-                package_name().split("/"),
-                1,
-            )
-        ])),
-    ),
-)
-
-tar(
+pkg_tar(
     name = "tar_strip_prefix",
     srcs = _SRCS5,
-    out = "5.tar",
-    mtree = "strip_prefix",
+    strip_prefix = package_name(),
 )
 
 assert_tar_listing(
