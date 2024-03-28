@@ -63,7 +63,7 @@ def _expand_template_impl(ctx):
         )
 
     all_outs = [output]
-    runfiles = ctx.runfiles(files = all_outs)
+    runfiles = ctx.runfiles(files = ctx.files.data)
     return [DefaultInfo(files = depset(all_outs), runfiles = runfiles)]
 
 expand_template_lib = struct(
